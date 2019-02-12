@@ -19,6 +19,16 @@ class Module extends \yii\base\Module implements BootstrapInterface
     public $aliases = [];
 
     /**
+     * @var string
+     */
+    public $lang = 'en';
+
+    /**
+     * @var string
+     */
+    public $accessRoles = [];
+
+    /**
      * @var array
      */
     public $levelClasses = [
@@ -38,15 +48,18 @@ class Module extends \yii\base\Module implements BootstrapInterface
      */
     public function bootstrap($app)
     {
-        if ($app instanceof Application) {
-            $app->getUrlManager()->addRules([
+        if (!$app instanceof Application) {
+            throw new InvalidConfigException('Can use for web application only.');
+        }
+
+        $app->getUrlManager()->addRules(
+            [
                 $this->id => $this->id . '/default/index',
                 $this->id . '/<action:\w+>/<slug:[\w-]+>' => $this->id . '/default/<action>',
                 $this->id . '/<action:\w+>' => $this->id . '/default/<action>',
-            ], false);
-        } else {
-            throw new InvalidConfigException('Can use for web application only.');
-        }
+            ],
+            false
+        );
     }
 
     /**

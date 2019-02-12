@@ -14,16 +14,14 @@ $this->title = $name;
 $this->params['breadcrumbs'][] = ['label' => 'Logs', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $name;
 
-$formatter = new Formatter();
-$fullSizeFormat = $formatter->format($fullSize, 'shortSize');
-$zipBtn = $fullSize > 1 ? Html::a('zip', ['zip', 'slug' => Yii::$app->request->get('slug')], ['class' => 'btn btn-success btn-xs']) : '';
+$fullSizeFormat = (new Formatter())->format($fullSize, 'shortSize');
 ?>
 
 <div class="log-viewer-history">
     <?= GridView::widget([
         'tableOptions' => ['class' => 'table'],
         'dataProvider' => $dataProvider,
-        'caption' => "full size: {$fullSizeFormat}. $zipBtn",
+        'caption' => "full size: {$fullSizeFormat}",
         'columns' => [
             [
                 'attribute' => 'fileName',
@@ -31,14 +29,6 @@ $zipBtn = $fullSize > 1 ? Html::a('zip', ['zip', 'slug' => Yii::$app->request->g
                 'value' => function (Log $log)
                 {
                     return pathinfo($log->fileName, PATHINFO_BASENAME);
-                },
-            ],
-            [
-                'attribute' => 'counts',
-                'format' => 'raw',
-                'value' => function (Log $log)
-                {
-                    return $this->render('_counts', ['log' => $log]);
                 },
             ],
             [
@@ -53,35 +43,31 @@ $zipBtn = $fullSize > 1 ? Html::a('zip', ['zip', 'slug' => Yii::$app->request->g
             ],
             [
                 'class' => '\yii\grid\ActionColumn',
-                'template' => '{view} {delete} {download}',
+                'template' => '{download}',
                 'urlCreator' => function ($action, Log $log)
                 {
                     return [$action, 'slug' => $log->slug, 'stamp' => $log->stamp];
                 },
                 'buttons' => [
-                    'view' => function ($url, Log $log)
-                    {
-                        if ($log->isZip) {
-                            return '';
-                        }
-
-                        return Html::a('View', $url, [
-                            'class' => 'btn btn-xs btn-primary',
-                            'target' => '_blank',
-                        ]);
-                    },
-                    'delete' => function ($url)
-                    {
-                        return Html::a('Delete', $url, [
-                            'class' => 'btn btn-xs btn-danger',
-                            'data' => ['method' => 'post', 'confirm' => 'Are you sure?'],
-                        ]);
-                    },
+//                    'delete' => function ($url, Log $log)
+//                    {
+//                        return Html::a(
+//                            '<i class="glyphicon glyphicon-remove"></i>',
+//                            $url,
+//                            [
+//                                'class' => 'btn btn-xs btn-danger',
+//                                'title' => 'delete',
+//                                'data' => ['method' => 'post', 'confirm' => 'Are you sure?'],
+//                            ]
+//                        );
+//                    },
                     'download' => function ($url, Log $log)
                     {
-                        return !$log->isExist ? '' : Html::a('Download', $url, [
-                            'class' => 'btn btn-xs btn-default',
-                        ]);
+                        return !$log->isExist ? '' : Html::a(
+                            '<i class="glyphicon glyphicon-download-alt"></i>',
+                            $url,
+                            ['class' => 'btn btn-xs btn-success', 'title' => 'download']
+                        );
                     },
                 ],
             ],

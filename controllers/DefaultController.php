@@ -2,10 +2,11 @@
 
 namespace lancoid\yii2LogViewer\controllers;
 
-use lancoid\yii2LogViewer\{models\Log, models\ZipLogForm, Module};
+use lancoid\yii2LogViewer\{localization\LangHelper, models\Log, models\ZipLogForm, Module};
 use yii\web\{Controller, NotFoundHttpException};
 use yii\helpers\{ArrayHelper, Url};
 use yii\data\ArrayDataProvider;
+use yii\filters\AccessControl;
 use Yii;
 
 /**
@@ -21,62 +22,36 @@ class DefaultController extends Controller
     public $module;
 
     /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [['allow' => true, 'roles' => $this->module->accessRoles]],
+            ],
+        ];
+    }
+
+    /**
      * @return string
      */
     public function actionIndex()
     {
         Url::remember();
 
-        return $this->render('index', [
-            'dataProvider' => new ArrayDataProvider([
-                'allModels' => $this->module->getLogs(),
-                'sort' => [
-                    'attributes' => [
-                        'name',
-                        'size' => ['default' => SORT_DESC],
-                        'updatedAt' => ['default' => SORT_DESC],
-                    ],
-                ],
-                'pagination' => ['pageSize' => 0],
-            ]),
-        ]);
-    }
-
-    /**
-     * @param      $slug
-     * @param null $stamp
-     *
-     * @return \yii\console\Response|\yii\web\Response
-     * @throws NotFoundHttpException
-     */
-    public function actionView($slug, $stamp = null)
-    {
-        $log = $this->find($slug, $stamp);
-        if ($log->isExist) {
-            return Yii::$app->response->sendFile($log->fileName, basename($log->fileName), [
-                'mimeType' => 'text/plain',
-                'inline' => true,
-            ]);
-        } else {
-            throw new NotFoundHttpException('Log not found.');
-        }
-    }
-
-    /**
-     * @param $slug
-     *
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException
-     */
-    public function actionArchive($slug)
-    {
-        if ($this->find($slug, null)->archive(date('YmdHis'))) {
-            Yii::$app->session->setFlash('success', 'archive success');
-
-            return $this->redirect(['history', 'slug' => $slug]);
-        } else {
-            throw new NotFoundHttpException('Log not found.');
-        }
+        return $this->render(
+            'index',
+            [
+                'dataProvider' => new ArrayDataProvider(
+                    [
+                        'allModels' => $this->module->getLogs(),
+                        'pagination' => ['pageSize' => 0],
+                    ]
+                ),
+            ]
+        );
     }
 
     /**
@@ -95,45 +70,56 @@ class DefaultController extends Controller
 
         return $this->render('history', [
             'name' => $log->name,
-            'dataProvider' => new ArrayDataProvider([
-                'allModels' => $allLogs,
-                'sort' => [
-                    'attributes' => [
-                        'fileName',
-                        'size' => ['default' => SORT_DESC],
-                        'updatedAt' => ['default' => SORT_DESC],
+            'dataProvider' => new ArrayDataProvider(
+                [
+                    'allModels' => $allLogs,
+                    'sort' => [
+                        'attributes' => ['updatedAt' => ['default' => SORT_DESC]],
+                        'defaultOrder' => ['updatedAt' => SORT_DESC],
                     ],
-                    'defaultOrder' => ['updatedAt' => SORT_DESC],
-                ],
-            ]),
+                ]
+            ),
             'fullSize' => $fullSize,
         ]);
     }
 
     /**
-     * @param $slug
+     * @param      $slug
+     * @param null $stamp
      *
-     * @return string|\yii\web\Response
+     * @return \yii\console\Response|\yii\web\Response
      * @throws NotFoundHttpException
      */
-    public function actionZip($slug)
+    public function actionView($slug, $stamp = null)
+    {
+        $log = $this->find($slug, $stamp);
+
+        return Yii::$app->response->sendFile(
+            $log->fileName,
+            basename($log->fileName),
+            ['mimeType' => 'text/plain', 'inline' => true]
+        );
+    }
+
+    /**
+     * @param $slug
+     *
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionArchive($slug)
     {
         $log = $this->find($slug, null);
         $model = new ZipLogForm(['log' => $log]);
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $result = $model->zip();
-            if ($result !== false) {
-                Yii::$app->session->setFlash('success', 'zip success');
+        if ($model->zip()) {
+            Yii::$app->session->setFlash('success', LangHelper::langMessage($this->module->lang, 'archive_success'));
 
-                return $this->redirect(Url::previous());
-            } else {
-                Yii::$app->session->setFlash('error', 'zip error: ', implode('<br>', $model->getFirstErrors()));
-            }
+            return $this->redirect(['history', 'slug' => $slug]);
         }
 
-        return $this->render('zip', [
-            'model' => $model,
-        ]);
+        Yii::$app->session->setFlash('danger', LangHelper::langMessage($this->module->lang, 'archive_error'));
+
+        return $this->refresh();
     }
 
     /**
@@ -172,11 +158,7 @@ class DefaultController extends Controller
     public function actionDownload($slug, $stamp = null)
     {
         $log = $this->find($slug, $stamp);
-        if ($log->isExist) {
-            Yii::$app->response->sendFile($log->fileName)->send();
-        } else {
-            throw new NotFoundHttpException('Log not found.');
-        }
+        Yii::$app->response->sendFile($log->fileName)->send();
     }
 
     /**
@@ -188,10 +170,11 @@ class DefaultController extends Controller
      */
     protected function find($slug, $stamp)
     {
-        if ($log = $this->module->findLog($slug, $stamp)) {
-            return $log;
-        } else {
-            throw new NotFoundHttpException('Log not found.');
+        $log = $this->module->findLog($slug, $stamp);
+        if (!$log) {
+            throw new NotFoundHttpException(LangHelper::langMessage($this->module->lang, 'log_not_found'));
         }
+
+        return $log;
     }
 }

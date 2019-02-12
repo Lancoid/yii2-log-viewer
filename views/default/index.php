@@ -57,36 +57,51 @@ $this->params['breadcrumbs'][] = 'Logs';
                 'buttons' => [
                     'history' => function ($url)
                     {
-                        return Html::a('History', $url, [
-                            'class' => 'btn btn-xs btn-default',
-                        ]);
+                        return Html::a(
+                            '<i class="glyphicon glyphicon-folder-open"></i>',
+                            $url,
+                            ['class' => 'btn btn-xs btn-warning', 'title' => 'history']
+                        );
                     },
                     'view' => function ($url, Log $log)
                     {
-                        return !$log->isExist ? '' : Html::a('View', $url, [
-                            'class' => 'btn btn-xs btn-primary',
-                            'target' => '_blank',
-                        ]);
+                        return !$log->isExist ? '' : Html::a(
+                            '<i class="glyphicon glyphicon-search"></i>',
+                            $url,
+                            ['class' => 'btn btn-xs btn-primary', 'title' => 'view']
+                        );
                     },
                     'archive' => function ($url, Log $log)
                     {
-                        return !$log->isExist ? '' : Html::a('Archive', $url, [
-                            'class' => 'btn btn-xs btn-success',
-                            'data' => ['method' => 'post', 'confirm' => 'Are you sure?'],
-                        ]);
+                        return !$log->isExist ? '' : Html::a(
+                            '<i class="glyphicon glyphicon-compressed"></i>',
+                            $url,
+                            [
+                                'class' => 'btn btn-xs btn-info',
+                                'title' => 'archive',
+                                'data' => ['method' => 'post', 'confirm' => 'Are you sure?'],
+                            ]
+                        );
                     },
                     'delete' => function ($url, Log $log)
                     {
-                        return !$log->isExist ? '' : Html::a('Delete', array_merge($url, ['since' => $log->updatedAt]), [
-                            'class' => 'btn btn-xs btn-danger',
-                            'data' => ['method' => 'post', 'data-a' => 'aa', 'confirm' => 'Are you sure?'],
-                        ]);
+                        return !$log->isExist ? '' : Html::a(
+                            '<i class="glyphicon glyphicon-remove"></i>',
+                            array_merge($url, ['since' => $log->updatedAt]),
+                            [
+                                'class' => 'btn btn-xs btn-danger',
+                                'title' => 'delete',
+                                'data' => ['method' => 'post', 'data-a' => 'aa', 'confirm' => 'Are you sure?'],
+                            ]
+                        );
                     },
                     'download' => function ($url, Log $log)
                     {
-                        return !$log->isExist ? '' : Html::a('Download', $url, [
-                            'class' => 'btn btn-xs btn-default',
-                        ]);
+                        return !$log->isExist ? '' : Html::a(
+                            '<i class="glyphicon glyphicon-download-alt"></i>',
+                            $url,
+                            ['class' => 'btn btn-xs btn-success', 'title' => 'download']
+                        );
                     },
                 ],
             ],

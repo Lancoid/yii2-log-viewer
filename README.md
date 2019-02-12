@@ -22,6 +22,8 @@ return [
                 'Backend Errors' => '@backend/runtime/logs/app.log',
                 'Frontend Errors' => '@frontend/runtime/logs/app.log',
             ],
+            'lang' => 'en',
+            'accessRoles' => ['admin'],
         ],
     ],
 ];

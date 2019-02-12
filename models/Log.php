@@ -169,28 +169,10 @@ class Log extends BaseObject
                 }
             }
             fclose($h);
-            Yii::$app->cache->set($key, $counts, 0, new FileDependency([
-                'fileName' => $this->getFileName(),
-            ]));
+            Yii::$app->cache->set($key, $counts, 0, new FileDependency(['fileName' => $this->getFileName()]));
         }
 
         return $counts;
-    }
-
-    /**
-     * @param string $stamp
-     *
-     * @return boolean
-     */
-    public function archive($stamp)
-    {
-        if ($this->getStamp() === null && $this->getIsExist()) {
-            rename($this->getFileName(), static::extractFileName($this->getAlias(), $stamp));
-
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**
@@ -212,11 +194,8 @@ class Log extends BaseObject
     public static function extractFileName($alias, $stamp = null)
     {
         $fileName = FileHelper::normalizePath(Yii::getAlias($alias, false));
-        if ($stamp === null) {
-            return $fileName;
-        }
 
-        return $fileName . '.' . $stamp;
+        return $stamp === null ? $fileName : $fileName . '.' . $stamp;
     }
 
     /**
@@ -228,10 +207,7 @@ class Log extends BaseObject
     public static function extractFileStamp($alias, $fileName)
     {
         $originName = FileHelper::normalizePath(Yii::getAlias($alias, false));
-        if (strpos($fileName, $originName) === 0) {
-            return substr($fileName, strlen($originName) + 1);
-        } else {
-            return null;
-        }
+
+        return strpos($fileName, $originName) === 0 ? substr($fileName, strlen($originName) + 1) : null;
     }
 }
