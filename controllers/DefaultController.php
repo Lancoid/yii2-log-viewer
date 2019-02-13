@@ -2,8 +2,8 @@
 
 namespace lancoid\yii2LogViewer\controllers;
 
-use lancoid\yii2LogViewer\{localization\LangHelper, models\Log, models\ZipLogForm, Module};
-use yii\web\{Controller, NotFoundHttpException};
+use lancoid\yii2LogViewer\{localization\LangHelper, models\ArchiveLogForm, models\DeleteLogForm, models\Log, models\ZipLogForm, Module};
+use yii\web\{Controller, ForbiddenHttpException, NotFoundHttpException};
 use yii\helpers\{ArrayHelper, Url};
 use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
@@ -64,7 +64,6 @@ class DefaultController extends Controller
     {
         Url::remember();
         $log = $this->find($slug, null);
-
         $allLogs = $this->module->getHistory($log);
         $fullSize = array_sum(ArrayHelper::getColumn($allLogs, 'size'));
 
@@ -110,14 +109,16 @@ class DefaultController extends Controller
     public function actionArchive($slug)
     {
         $log = $this->find($slug, null);
-        $model = new ZipLogForm(['log' => $log]);
-        if ($model->zip()) {
-            Yii::$app->session->setFlash('success', LangHelper::langMessage($this->module->lang, 'archive_success'));
+        $model = new ArchiveLogForm(['log' => $log]);
+
+        if ($model->archive()) {
+            Yii::$app->session->setFlash(
+                'success',
+                LangHelper::langMessage($this->module->lang, 'archive_success')
+            );
 
             return $this->redirect(['history', 'slug' => $slug]);
         }
-
-        Yii::$app->session->setFlash('danger', LangHelper::langMessage($this->module->lang, 'archive_error'));
 
         return $this->refresh();
     }
@@ -130,23 +131,19 @@ class DefaultController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException
      */
-    public function actionDelete($slug, $stamp = null, $since = null)
+    public function actionDelete($slug)
     {
-        $log = $this->find($slug, $stamp);
-        if ($since) {
-            if ($log->updatedAt != $since) {
-                Yii::$app->session->setFlash('error', 'delete error: file has updated');
+        $log = $this->find($slug, null);
+        $model = new DeleteLogForm(['log' => $log]);
 
-                return $this->redirect(Url::previous());
-            }
-        }
-        if (unlink($log->fileName)) {
-            Yii::$app->session->setFlash('success', 'delete success');
-        } else {
-            Yii::$app->session->setFlash('error', 'delete error');
+        if ($model->delete()) {
+            Yii::$app->session->setFlash(
+                'success',
+                LangHelper::langMessage($this->module->lang, 'archive_success')
+            );
         }
 
-        return $this->redirect(Url::previous());
+        return $this->refresh();
     }
 
     /**

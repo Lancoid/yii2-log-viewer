@@ -87,7 +87,7 @@ $this->params['breadcrumbs'][] = 'Logs';
                     {
                         return !$log->isExist ? '' : Html::a(
                             '<i class="glyphicon glyphicon-remove"></i>',
-                            array_merge($url, ['since' => $log->updatedAt]),
+                            $url,
                             [
                                 'class' => 'btn btn-xs btn-danger',
                                 'title' => 'delete',

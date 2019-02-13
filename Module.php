@@ -2,8 +2,8 @@
 
 namespace lancoid\yii2LogViewer;
 
-use lancoid\yii2LogViewer\models\Log;
 use yii\base\{BootstrapInterface, InvalidConfigException};
+use lancoid\yii2LogViewer\models\Log;
 use yii\web\Application;
 
 /**
@@ -29,6 +29,11 @@ class Module extends \yii\base\Module implements BootstrapInterface
     public $accessRoles = [];
 
     /**
+     * @var string
+     */
+    public $moduleUrl;
+
+    /**
      * @var array
      */
     public $levelClasses = [
@@ -52,11 +57,13 @@ class Module extends \yii\base\Module implements BootstrapInterface
             throw new InvalidConfigException('Can use for web application only.');
         }
 
+        $url = $this->moduleUrl ? $this->moduleUrl : $this->id;
+
         $app->getUrlManager()->addRules(
             [
-                $this->id => $this->id . '/default/index',
-                $this->id . '/<action:\w+>/<slug:[\w-]+>' => $this->id . '/default/<action>',
-                $this->id . '/<action:\w+>' => $this->id . '/default/<action>',
+                $url => $this->id . '/default/index',
+                $url . '/<action:\w+>/<slug:[\w-]+>' => $this->id . '/default/<action>',
+                $url . '/<action:\w+>' => $this->id . '/default/<action>',
             ],
             false
         );
