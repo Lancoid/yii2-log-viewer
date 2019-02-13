@@ -3,7 +3,6 @@
 namespace lancoid\yii2LogViewer\models;
 
 use yii\helpers\{FileHelper, Inflector, StringHelper};
-use yii\caching\FileDependency;
 use yii\base\BaseObject;
 use Yii;
 
@@ -137,42 +136,6 @@ class Log extends BaseObject
     public function getDownloadName()
     {
         return $this->getSlug() . '.log';
-    }
-
-    /**
-     * @param bool $force
-     *
-     * @return array
-     */
-    public function getCounts($force = false)
-    {
-        if (!$this->getIsExist()) {
-            return [];
-        }
-
-        $key = $this->getFileName() . '#counts';
-        if (!$force && ($counts = Yii::$app->cache->get($key)) !== false) {
-            return $counts;
-        }
-
-        $counts = [];
-        if ($h = fopen($this->getFileName(), 'r')) {
-            while (($line = fgets($h)) !== false) {
-                if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $line)) {
-                    if (preg_match('/^[\d\-\: ]+\[.*\]\[.*\]\[.*\]\[(.*)\]/U', $line, $m)) {
-                        $level = $m[1];
-                        if (!isset($counts[$level])) {
-                            $counts[$level] = 0;
-                        }
-                        $counts[$level]++;
-                    }
-                }
-            }
-            fclose($h);
-            Yii::$app->cache->set($key, $counts, 0, new FileDependency(['fileName' => $this->getFileName()]));
-        }
-
-        return $counts;
     }
 
     /**

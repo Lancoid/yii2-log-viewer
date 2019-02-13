@@ -1,14 +1,17 @@
 <?php
 
-use lancoid\yii2LogViewer\models\Log;
-use yii\grid\GridView;
-use yii\helpers\Html;
+use lancoid\yii2LogViewer\{models\Log, Module};
+use yii\{grid\GridView, helpers\Html};
 
 /* @var \yii\web\View $this */
 /* @var \yii\data\ArrayDataProvider $dataProvider */
 
-$this->title = 'Logs';
-$this->params['breadcrumbs'][] = 'Logs';
+/* @var Module $module */
+$module = $this->context->module;
+$messages = $module->messages;
+
+$this->title = $messages['logsTitle'];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="log-viewer-index">
     <?= GridView::widget([
@@ -18,6 +21,7 @@ $this->params['breadcrumbs'][] = 'Logs';
         'columns' => [
             [
                 'attribute' => 'name',
+                'label' => $messages['nameInGrid'],
                 'format' => 'raw',
                 'value' => function (Log $log)
                 {
@@ -29,21 +33,14 @@ $this->params['breadcrumbs'][] = 'Logs';
                 },
             ],
             [
-                'attribute' => 'counts',
-                'format' => 'raw',
-                'headerOptions' => ['class' => 'sort-ordinal'],
-                'value' => function (Log $log)
-                {
-                    return $this->render('_counts', ['log' => $log]);
-                },
-            ],
-            [
                 'attribute' => 'size',
+                'label' => $messages['sizeInGrid'],
                 'format' => 'shortSize',
                 'headerOptions' => ['class' => 'sort-ordinal'],
             ],
             [
                 'attribute' => 'updatedAt',
+                'label' => $messages['updatedAtInGrid'],
                 'format' => 'relativeTime',
                 'headerOptions' => ['class' => 'sort-numerical'],
             ],
@@ -55,52 +52,52 @@ $this->params['breadcrumbs'][] = 'Logs';
                     return [$action, 'slug' => $log->slug];
                 },
                 'buttons' => [
-                    'history' => function ($url)
+                    'history' => function ($url) use ($messages)
                     {
                         return Html::a(
                             '<i class="glyphicon glyphicon-folder-open"></i>',
                             $url,
-                            ['class' => 'btn btn-xs btn-warning', 'title' => 'history']
+                            ['class' => 'btn btn-xs btn-warning', 'title' => $messages['historyBtn']]
                         );
                     },
-                    'view' => function ($url, Log $log)
+                    'view' => function ($url, Log $log) use ($messages)
                     {
                         return !$log->isExist ? '' : Html::a(
                             '<i class="glyphicon glyphicon-search"></i>',
                             $url,
-                            ['class' => 'btn btn-xs btn-primary', 'title' => 'view']
+                            ['class' => 'btn btn-xs btn-primary', 'title' => $messages['viewBtn']]
                         );
                     },
-                    'archive' => function ($url, Log $log)
+                    'archive' => function ($url, Log $log) use ($messages)
                     {
                         return !$log->isExist ? '' : Html::a(
                             '<i class="glyphicon glyphicon-compressed"></i>',
                             $url,
                             [
                                 'class' => 'btn btn-xs btn-info',
-                                'title' => 'archive',
-                                'data' => ['method' => 'post', 'confirm' => 'Are you sure?'],
+                                'title' => $messages['archiveBtn'],
+                                'data' => ['method' => 'post', 'confirm' => $messages['sureAlert']],
                             ]
                         );
                     },
-                    'delete' => function ($url, Log $log)
+                    'delete' => function ($url, Log $log) use ($module, $messages)
                     {
-                        return !$log->isExist ? '' : Html::a(
+                        return ($module->canDelete && $log->isExist) ? Html::a(
                             '<i class="glyphicon glyphicon-remove"></i>',
                             $url,
                             [
                                 'class' => 'btn btn-xs btn-danger',
-                                'title' => 'delete',
-                                'data' => ['method' => 'post', 'data-a' => 'aa', 'confirm' => 'Are you sure?'],
+                                'title' => $messages['deleteBtn'],
+                                'data' => ['method' => 'post', 'data-a' => 'aa', 'confirm' => $messages['sureAlert']],
                             ]
-                        );
+                        ) : '';
                     },
-                    'download' => function ($url, Log $log)
+                    'download' => function ($url, Log $log) use ($messages)
                     {
                         return !$log->isExist ? '' : Html::a(
                             '<i class="glyphicon glyphicon-download-alt"></i>',
                             $url,
-                            ['class' => 'btn btn-xs btn-success', 'title' => 'download']
+                            ['class' => 'btn btn-xs btn-success', 'title' => $messages['downloadBtn']]
                         );
                     },
                 ],

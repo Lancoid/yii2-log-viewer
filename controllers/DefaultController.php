@@ -2,7 +2,7 @@
 
 namespace lancoid\yii2LogViewer\controllers;
 
-use lancoid\yii2LogViewer\{localization\LangHelper, models\ArchiveLogForm, models\DeleteLogForm, models\Log, models\ZipLogForm, Module};
+use lancoid\yii2LogViewer\{models\ArchiveLogForm, models\DeleteLogForm, models\Log, Module};
 use yii\web\{Controller, ForbiddenHttpException, NotFoundHttpException};
 use yii\helpers\{ArrayHelper, Url};
 use yii\data\ArrayDataProvider;
@@ -104,6 +104,7 @@ class DefaultController extends Controller
      * @param $slug
      *
      * @return \yii\web\Response
+     * @throws ForbiddenHttpException
      * @throws NotFoundHttpException
      */
     public function actionArchive($slug)
@@ -112,10 +113,7 @@ class DefaultController extends Controller
         $model = new ArchiveLogForm(['log' => $log]);
 
         if ($model->archive()) {
-            Yii::$app->session->setFlash(
-                'success',
-                LangHelper::langMessage($this->module->lang, 'archive_success')
-            );
+            Yii::$app->session->setFlash('success', $this->module->messages['archiveSuccess']);
 
             return $this->redirect(['history', 'slug' => $slug]);
         }
@@ -124,11 +122,10 @@ class DefaultController extends Controller
     }
 
     /**
-     * @param      $slug
-     * @param null $stamp
-     * @param null $since
+     * @param $slug
      *
      * @return \yii\web\Response
+     * @throws ForbiddenHttpException
      * @throws NotFoundHttpException
      */
     public function actionDelete($slug)
@@ -137,10 +134,7 @@ class DefaultController extends Controller
         $model = new DeleteLogForm(['log' => $log]);
 
         if ($model->delete()) {
-            Yii::$app->session->setFlash(
-                'success',
-                LangHelper::langMessage($this->module->lang, 'archive_success')
-            );
+            Yii::$app->session->setFlash('success', $this->module->messages['deleteSuccess']);
         }
 
         return $this->refresh();
@@ -159,17 +153,17 @@ class DefaultController extends Controller
     }
 
     /**
-     * @param string      $slug
-     * @param null|string $stamp
+     * @param $slug
+     * @param $stamp
      *
-     * @return Log
+     * @return Log|null
      * @throws NotFoundHttpException
      */
     protected function find($slug, $stamp)
     {
         $log = $this->module->findLog($slug, $stamp);
         if (!$log) {
-            throw new NotFoundHttpException(LangHelper::langMessage($this->module->lang, 'log_not_found'));
+            throw new NotFoundHttpException($this->module->messages['logNotFound']);
         }
 
         return $log;

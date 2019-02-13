@@ -2,9 +2,7 @@
 
 namespace lancoid\yii2LogViewer\models;
 
-use lancoid\yii2LogViewer\models\Log;
-use yii\web\ForbiddenHttpException;
-use yii\base\Model;
+use yii\{web\ForbiddenHttpException, base\Model};
 use ZipArchive;
 
 /**
@@ -15,9 +13,14 @@ use ZipArchive;
 class ArchiveLogForm extends Model
 {
     /**
-     * @var Log
+     * @var \lancoid\yii2LogViewer\models\Log
      */
     public $log;
+
+    /**
+     * @var \lancoid\yii2LogViewer\Module
+     */
+    public $module;
 
     /**
      * @return bool
@@ -32,19 +35,19 @@ class ArchiveLogForm extends Model
 
         try {
             if (!$zip->open($fileName, ZipArchive::CREATE)) {
-                throw new \Exception('cannot open zipFile, do you have permission?');
+                throw new \Exception($this->module->messages['cannotOpenZipFile']);
             }
 
             if (!$zip->addFile($log->fileName, basename($log->fileName))) {
-                throw new \Exception('Failure to add file, do you have permission?');
+                throw new \Exception($this->module->messages['failureToAddZipFile']);
             }
 
             if (!$zip->close()) {
-                throw new \Exception('Failure to create temporary file, do you have permission?');
+                throw new \Exception($this->module->messages['failureToCreateTemporaryFile']);
             }
 
             if (!@unlink($log->fileName)) {
-                throw new \Exception('Failure to delete source file, do you have permission?');
+                throw new \Exception($this->module->messages['failureToDeleteSourceFile']);
             }
         } catch (\Exception $e) {
             throw new ForbiddenHttpException($e->getMessage());

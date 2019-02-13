@@ -25,6 +25,7 @@ return [
             'lang' => 'en',
             'accessRoles' => ['admin'],
             'moduleUrl' => 'admin/log-viewer',
+            'canDelete' => true,
         ],
     ],
 ];

@@ -18,25 +18,85 @@ class LangHelper
      * @var array
      */
     private static $messages = [
-        // controller
         'en' => [
-            'log_not_found' => 'Log not found.',
-            'archive_success' => 'Archive Success',
-            'archive_error' => 'Archive Error',
+            // module
+            'webApplicationOnly' => 'Can use for web application only.',
+
+            // controller
+            'logNotFound' => 'Log not found.',
+            'archiveSuccess' => 'Archive Success',
+            'deleteSuccess' => 'Delete success',
+
+            // models
+            'cannotOpenZipFile' => 'Cannot open zipFile, do you have permission?',
+            'failureToAddZipFile' => 'Failure to add zipFile, do you have permission?',
+            'failureToCreateTemporaryFile' => 'Failure to create temporary file, do you have permission?',
+            'failureToDeleteSourceFile' => 'Failure to delete source file, do you have permission?',
+
+            // views
+            'logTitle' => 'Log',
+            'logsTitle' => 'Logs',
+            'nameInGrid' => 'Name',
+            'sizeInGrid' => 'Size',
+            'updatedAtInGrid' => 'UpdatedAt',
+            'fullSize' => 'Full size',
+            'fileNameInGrid' => 'Filename',
+
+            // buttons
+            'historyBtn' => 'History',
+            'viewBtn' => 'View',
+            'archiveBtn' => 'Archive',
+            'deleteBtn' => 'Delete',
+            'downloadBtn' => 'Download',
+
+            // alert
+            'sureAlert' => 'Are you sure?',
         ],
-        'ru',
+        'ru' => [
+            // module
+            'webApplicationOnly' => 'Использование возможно только в веб-приложениях.',
+
+            // controller
+            'logNotFound' => 'Лог не найден.',
+            'archiveSuccess' => 'Архивация проведена успешно',
+            'deleteSuccess' => 'Удаление проведено успешно',
+
+            // models
+            'cannotOpenZipFile' => 'Cannot open zipFile.',
+            'failureToAddZipFile' => 'Failure to add zipFile.',
+            'failureToCreateTemporaryFile' => 'Failure to create temporary file.',
+            'failureToDeleteSourceFile' => 'Failure to delete source file.',
+
+            // views
+            'logTitle' => 'Лог',
+            'logsTitle' => 'Логи',
+            'nameInGrid' => 'Имя',
+            'sizeInGrid' => 'Размер',
+            'updatedAtInGrid' => 'Последние изменения',
+            'fullSize' => 'Полный размер',
+            'fileNameInGrid' => 'Имя файла',
+
+            // buttons
+            'historyBtn' => 'История',
+            'viewBtn' => 'Просмотр',
+            'archiveBtn' => 'Архивировать',
+            'deleteBtn' => 'Удалить',
+            'downloadBtn' => 'Скачать',
+
+            // alert
+            'sureAlert' => 'Вы уверены в этом действии?',
+        ],
     ];
 
     /**
      * @param string $lang
-     * @param string $message
      *
-     * @return mixed
+     * @return array
      */
-    public static function langMessage(string $lang, string $message)
+    public static function setMessageArray(string $lang)
     {
-        $language = key_exists($lang, self::$acceptedLanguage) ? $lang : 'en';
+        $key = in_array($lang, self::$acceptedLanguage) ? $lang : 'en';
 
-        return self::$messages[$language][$message];
+        return self::$messages[$key];
     }
 }

@@ -2,9 +2,7 @@
 
 namespace lancoid\yii2LogViewer\models;
 
-use lancoid\yii2LogViewer\models\Log;
-use yii\web\ForbiddenHttpException;
-use yii\base\Model;
+use yii\{web\ForbiddenHttpException, base\Model};
 
 /**
  * Class DeleteLogForm
@@ -14,9 +12,14 @@ use yii\base\Model;
 class DeleteLogForm extends Model
 {
     /**
-     * @var Log
+     * @var \lancoid\yii2LogViewer\models\Log
      */
     public $log;
+
+    /**
+     * @var \lancoid\yii2LogViewer\Module
+     */
+    public $module;
 
     /**
      * @return bool
@@ -25,11 +28,15 @@ class DeleteLogForm extends Model
     public function delete()
     {
         try {
-            if (!@unlink($this->log->fileName)) {
-                throw new \Exception('Failure to delete source file, do you have permission?');
-            }
+            if (!$this->module->canDelete) {
+                throw new \Exception($this->module->messages['failureToDeleteSourceFile']);
+            } else {
+                if (!@unlink($this->log->fileName)) {
+                    throw new \Exception($this->module->messages['failureToDeleteSourceFile']);
+                }
 
-            return true;
+                return true;
+            }
         } catch (\Exception $e) {
             throw new ForbiddenHttpException($e->getMessage());
         }

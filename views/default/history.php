@@ -1,17 +1,19 @@
 <?php
 
-use lancoid\yii2LogViewer\models\Log;
-use yii\i18n\Formatter;
-use yii\grid\GridView;
-use yii\helpers\Html;
+use yii\{i18n\Formatter, grid\GridView, helpers\Html};
+use lancoid\yii2LogViewer\{models\Log, Module};
 
 /* @var \yii\web\View $this */
 /* @var \yii\data\ArrayDataProvider $dataProvider */
 /* @var string $name */
 /* @var integer $fullSize */
 
-$this->title = $name;
-$this->params['breadcrumbs'][] = ['label' => 'Logs', 'url' => ['index']];
+/* @var Module $module */
+$module = $this->context->module;
+$messages = $module->messages;
+
+$this->title = $messages['logTitle'] . ': ' . $name;
+$this->params['breadcrumbs'][] = ['label' => $messages['logsTitle'], 'url' => ['index']];
 $this->params['breadcrumbs'][] = $name;
 
 $fullSizeFormat = (new Formatter())->format($fullSize, 'shortSize');
@@ -21,10 +23,11 @@ $fullSizeFormat = (new Formatter())->format($fullSize, 'shortSize');
     <?= GridView::widget([
         'tableOptions' => ['class' => 'table'],
         'dataProvider' => $dataProvider,
-        'caption' => "full size: {$fullSizeFormat}",
+        'caption' => $messages['fullSize'] . ": {$fullSizeFormat}",
         'columns' => [
             [
                 'attribute' => 'fileName',
+                'label' => $messages['fileNameInGrid'],
                 'format' => 'raw',
                 'value' => function (Log $log)
                 {
@@ -33,40 +36,42 @@ $fullSizeFormat = (new Formatter())->format($fullSize, 'shortSize');
             ],
             [
                 'attribute' => 'size',
+                'label' => $messages['sizeInGrid'],
                 'format' => 'shortSize',
                 'headerOptions' => ['class' => 'sort-ordinal'],
             ],
             [
                 'attribute' => 'updatedAt',
+                'label' => $messages['updatedAtInGrid'],
                 'format' => 'relativeTime',
                 'headerOptions' => ['class' => 'sort-numerical'],
             ],
             [
                 'class' => '\yii\grid\ActionColumn',
-                'template' => '{download}',
+                'template' => '{delete} {download}',
                 'urlCreator' => function ($action, Log $log)
                 {
                     return [$action, 'slug' => $log->slug, 'stamp' => $log->stamp];
                 },
                 'buttons' => [
-//                    'delete' => function ($url, Log $log)
-//                    {
-//                        return Html::a(
-//                            '<i class="glyphicon glyphicon-remove"></i>',
-//                            $url,
-//                            [
-//                                'class' => 'btn btn-xs btn-danger',
-//                                'title' => 'delete',
-//                                'data' => ['method' => 'post', 'confirm' => 'Are you sure?'],
-//                            ]
-//                        );
-//                    },
-                    'download' => function ($url, Log $log)
+                    'delete' => function ($url) use ($module, $messages)
+                    {
+                        return $module->canDelete ? Html::a(
+                            '<i class="glyphicon glyphicon-remove"></i>',
+                            $url,
+                            [
+                                'class' => 'btn btn-xs btn-danger',
+                                'title' => $messages['deleteBtn'],
+                                'data' => ['method' => 'post', 'confirm' => $messages['sureAlert']],
+                            ]
+                        ) : '';
+                    },
+                    'download' => function ($url, Log $log) use ($messages)
                     {
                         return !$log->isExist ? '' : Html::a(
                             '<i class="glyphicon glyphicon-download-alt"></i>',
                             $url,
-                            ['class' => 'btn btn-xs btn-success', 'title' => 'download']
+                            ['class' => 'btn btn-xs btn-success', 'title' => $messages['downloadBtn']]
                         );
                     },
                 ],

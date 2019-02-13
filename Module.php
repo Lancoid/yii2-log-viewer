@@ -2,8 +2,8 @@
 
 namespace lancoid\yii2LogViewer;
 
+use lancoid\yii2LogViewer\{localization\LangHelper, models\Log};
 use yii\base\{BootstrapInterface, InvalidConfigException};
-use lancoid\yii2LogViewer\models\Log;
 use yii\web\Application;
 
 /**
@@ -34,6 +34,11 @@ class Module extends \yii\base\Module implements BootstrapInterface
     public $moduleUrl;
 
     /**
+     * @var string
+     */
+    public $canDelete = false;
+
+    /**
      * @var array
      */
     public $levelClasses = [
@@ -49,12 +54,19 @@ class Module extends \yii\base\Module implements BootstrapInterface
     public $defaultLevelClass = 'label-default';
 
     /**
+     * @var array
+     */
+    public $messages = [];
+
+    /**
      * {@inheritdoc}
      */
     public function bootstrap($app)
     {
+        $this->messages = LangHelper::setMessageArray($this->lang);
+
         if (!$app instanceof Application) {
-            throw new InvalidConfigException('Can use for web application only.');
+            throw new InvalidConfigException($this->messages['webApplicationOnly']);
         }
 
         $url = $this->moduleUrl ? $this->moduleUrl : $this->id;
@@ -112,20 +124,5 @@ class Module extends \yii\base\Module implements BootstrapInterface
         }
 
         return $logs;
-    }
-
-    /**
-     * @return integer
-     */
-    public function getTotalCount()
-    {
-        $total = 0;
-        foreach ($this->getLogs() as $log) {
-            foreach ($log->getCounts() as $count) {
-                $total += $count;
-            }
-        }
-
-        return $total;
     }
 }
