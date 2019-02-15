@@ -28,10 +28,11 @@ class LangHelper
             'deleteSuccess' => 'Delete success',
 
             // models
-            'cannotOpenZipFile' => 'Cannot open zipFile, do you have permission?',
-            'failureToAddZipFile' => 'Failure to add zipFile, do you have permission?',
-            'failureToCreateTemporaryFile' => 'Failure to create temporary file, do you have permission?',
-            'failureToDeleteSourceFile' => 'Failure to delete source file, do you have permission?',
+            'cannotOpenZipFile' => 'Cannot open zipFile.',
+            'cannotOpenLogFile' => 'Cannot open logFile.',
+            'failureToAddZipFile' => 'Failure to add zipFile.',
+            'failureToCreateTemporaryFile' => 'Failure to create temporary file.',
+            'failureToDeleteSourceFile' => 'Failure to delete source file.',
 
             // views
             'logTitle' => 'Log',
@@ -63,6 +64,7 @@ class LangHelper
 
             // models
             'cannotOpenZipFile' => 'Cannot open zipFile.',
+            'cannotOpenLogFile' => 'Cannot open logFile.',
             'failureToAddZipFile' => 'Failure to add zipFile.',
             'failureToCreateTemporaryFile' => 'Failure to create temporary file.',
             'failureToDeleteSourceFile' => 'Failure to delete source file.',
