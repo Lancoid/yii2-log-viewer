@@ -1,18 +1,15 @@
 <?php
 
-use lancoid\yii2LogViewer\{models\Log, Module};
-
 /* @var \yii\web\View $this */
 
-/* @var Module $module */
+/* @var \lancoid\yii2LogViewer\Module $module */
 $module = $this->context->module;
 $messages = $module->messages;
 
 $this->title = $messages['logsTitle'];
 $this->params['breadcrumbs'][] = $this->title;
 
-$this->registerCssFile('https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css');
-$this->registerJsFile('https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js');
+\lancoid\yii2LogViewer\assets\LogViewerAsset::register($this);
 ?>
 
 <div class="log-viewer-view">

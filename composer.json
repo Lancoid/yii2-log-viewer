@@ -2,7 +2,15 @@
     "name": "lancoid/yii2-log-viewer",
     "description": "Yii2 log viewer",
     "type": "yii2-extension",
-    "keywords": ["yii2", "extension", "module", "log", "log viewer"],
+    "keywords": [
+        "yii2",
+        "extension",
+        "module",
+        "log",
+        "log viewer",
+        "jQuery",
+        "datatables"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -15,7 +23,8 @@
         "ext-zip": "*",
         "yiisoft/yii2": "*",
         "yiisoft/yii2-bootstrap": "~2.0.0",
-        "bower-asset/datatables": "~1.10.18"
+        "bower-asset/datatables": "~1.10.18",
+        "bower-asset/datatables-plugins": "~1.10.15"
     },
     "autoload": {
         "psr-4": {
