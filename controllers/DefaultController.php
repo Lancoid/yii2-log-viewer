@@ -93,11 +93,37 @@ class DefaultController extends Controller
     {
         $log = $this->find($slug, $stamp);
 
-        return Yii::$app->response->sendFile(
-            $log->fileName,
-            basename($log->fileName),
-            ['mimeType' => 'text/plain', 'inline' => true]
-        );
+        $key = null;
+        $array = [];
+        if ($file = fopen($log->getFileName(), 'r')) {
+            while (($line = fgets($file)) !== false) {
+                if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $line, $date)) {
+                    $key = $key === null ? 0 : $key + 1;
+                    if (!strpos($line, '$_GET')) {
+                        $preparedLine = rtrim($line);
+                    } else {
+                        $preparedLine = str_replace(' $_GET = [', '', rtrim($line));
+                        $array[$key]['details'][] = '$_GET = [';
+                    }
+
+                    $aaa = explode('][', str_replace([$date[0] . ' '], '', $preparedLine));
+
+                    $array[$key]['date'] = $date[0];
+                    $array[$key]['ip'] = str_replace('[', '', $aaa[0]);
+                    $array[$key]['error-type'] = $aaa[3];
+                    $array[$key]['error'] = str_replace(']', '\r\n', $aaa[4]);
+                } else {
+                    if (strlen($line) !== 1) {
+                        $details = str_replace(["<address>", "</address>", "\r", "\n", "\r\n"], '', rtrim($line));
+                        if ($details !== '\'') {
+                            $array[$key]['details'][] = $details;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->render('view', ['logs' => array_reverse($array)]);
     }
 
     /**

@@ -2,13 +2,7 @@
     "name": "lancoid/yii2-log-viewer",
     "description": "Yii2 log viewer",
     "type": "yii2-extension",
-    "keywords": [
-        "yii2",
-        "extension",
-        "module",
-        "log",
-        "log viewer"
-    ],
+    "keywords": ["yii2", "extension", "module", "log", "log viewer"],
     "license": "MIT",
     "authors": [
         {
@@ -19,7 +13,9 @@
     "require": {
         "php": "7.2.*",
         "ext-zip": "*",
-        "yiisoft/yii2": "*"
+        "yiisoft/yii2": "*",
+        "yiisoft/yii2-bootstrap": "~2.0.0",
+        "bower-asset/datatables": "~1.10.18"
     },
     "autoload": {
         "psr-4": {
