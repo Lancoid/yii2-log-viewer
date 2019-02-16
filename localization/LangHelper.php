@@ -33,6 +33,7 @@ class LangHelper
             'failureToAddZipFile' => 'Failure to add zipFile.',
             'failureToCreateTemporaryFile' => 'Failure to create temporary file.',
             'failureToDeleteSourceFile' => 'Failure to delete source file.',
+            'failureCanDeletePermission' => 'No Permission to delete files',
 
             // views
             'logTitle' => 'Log',
@@ -91,11 +92,11 @@ class LangHelper
     ];
 
     /**
-     * @param string $lang
+     * @param $lang
      *
-     * @return array
+     * @return mixed
      */
-    public static function setMessageArray(string $lang)
+    public static function setMessageArray($lang)
     {
         $key = in_array($lang, self::$acceptedLanguage) ? $lang : 'en';
 

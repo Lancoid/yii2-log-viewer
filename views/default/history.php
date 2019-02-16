@@ -1,7 +1,10 @@
 <?php
 
-use yii\{i18n\Formatter, grid\GridView, helpers\Html};
-use lancoid\yii2LogViewer\{models\Log, Module};
+use yii\i18n\Formatter;
+use yii\grid\GridView;
+use yii\helpers\Html;
+use lancoid\yii2LogViewer\models\Log;
+use lancoid\yii2LogViewer\Module;
 
 /* @var \yii\web\View $this */
 /* @var \yii\data\ArrayDataProvider $dataProvider */

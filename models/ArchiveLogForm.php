@@ -2,7 +2,8 @@
 
 namespace lancoid\yii2LogViewer\models;
 
-use yii\{web\ForbiddenHttpException, base\Model};
+use yii\web\ForbiddenHttpException;
+use yii\base\Model;
 use ZipArchive;
 
 /**

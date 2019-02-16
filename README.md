@@ -26,6 +26,7 @@ return [
             'accessRoles' => ['admin'],
             'moduleUrl' => 'admin/log-viewer',
             'canDelete' => true,
+            'appLayout' => '@frontend/views/layouts/main',
         ],
     ],
 ];

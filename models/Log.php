@@ -2,7 +2,9 @@
 
 namespace lancoid\yii2LogViewer\models;
 
-use yii\helpers\{FileHelper, Inflector, StringHelper};
+use yii\helpers\FileHelper;
+use yii\helpers\Inflector;
+use yii\helpers\StringHelper;
 use yii\base\BaseObject;
 use Yii;
 

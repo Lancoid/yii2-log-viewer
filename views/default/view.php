@@ -16,13 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="log-viewer-view">
     <div class="col-md-12 table-container">
         <table id="table-log" class="table table-striped">
-            <thead>
-            <tr>
-                <th><span class="float-left">Уровень</span></th>
-                <th><span class="float-left">Контент</span></th>
-            </tr>
-            </thead>
-
             <tbody>
             <?php foreach ($log as $key => $value) { ?>
                 <tr>

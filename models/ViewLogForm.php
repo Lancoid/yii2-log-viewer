@@ -2,7 +2,8 @@
 
 namespace lancoid\yii2LogViewer\models;
 
-use yii\{web\ForbiddenHttpException, base\Model};
+use yii\web\ForbiddenHttpException;
+use yii\base\Model;
 
 /**
  * Class ViewLogForm
@@ -50,7 +51,6 @@ class ViewLogForm extends Model
                             $preparedLine = str_replace(' $_GET = [', '', rtrim($line));
                             $array[$key]['details'][] = '$_GET = [';
                         }
-
                     }
 
                     $aaa = explode('][', str_replace([$date[0] . ' '], '', $preparedLine));
@@ -78,6 +78,11 @@ class ViewLogForm extends Model
         return array_reverse($array);
     }
 
+    /**
+     * @param $type
+     *
+     * @return string
+     */
     private function setErrorIcon($type)
     {
         switch ($type) {
@@ -90,9 +95,17 @@ class ViewLogForm extends Model
             case 'info':
                 return 'pushpin';
                 break;
+            default:
+                return 'exclamation-sign';
+                break;
         }
     }
 
+    /**
+     * @param $type
+     *
+     * @return string
+     */
     private function setErrorColor($type)
     {
         switch ($type) {
@@ -104,6 +117,9 @@ class ViewLogForm extends Model
                 break;
             case 'info':
                 return 'text-info';
+                break;
+            default:
+                return 'text-success';
                 break;
         }
     }

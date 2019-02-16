@@ -2,9 +2,16 @@
 
 namespace lancoid\yii2LogViewer\controllers;
 
-use lancoid\yii2LogViewer\{models\ArchiveLogForm, models\DeleteLogForm, models\Log, models\ViewLogForm, Module};
-use yii\web\{Controller, ForbiddenHttpException, NotFoundHttpException};
-use yii\helpers\{ArrayHelper, Url};
+use lancoid\yii2LogViewer\models\ArchiveLogForm;
+use lancoid\yii2LogViewer\models\DeleteLogForm;
+use lancoid\yii2LogViewer\models\Log;
+use lancoid\yii2LogViewer\models\ViewLogForm;
+use lancoid\yii2LogViewer\Module;
+use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use Yii;
@@ -28,7 +35,7 @@ class DefaultController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::class,
+                'class' => AccessControl::className(),
                 'rules' => [['allow' => true, 'roles' => $this->module->accessRoles]],
             ],
         ];
@@ -83,16 +90,16 @@ class DefaultController extends Controller
     }
 
     /**
-     * @param      $slug
-     * @param null $stamp
+     * @param $slug
      *
-     * @return \yii\console\Response|\yii\web\Response
+     * @return string
+     * @throws ForbiddenHttpException
      * @throws NotFoundHttpException
      */
     public function actionView($slug)
     {
         $log = $this->find($slug, null);
-        $model = new ViewLogForm(['log' => $log]);
+        $model = new ViewLogForm(['log' => $log, 'module' => $this->module]);
 
         return $this->render('view', ['log' => $model->convertLogFile()]);
     }
@@ -107,7 +114,7 @@ class DefaultController extends Controller
     public function actionArchive($slug)
     {
         $log = $this->find($slug, null);
-        $model = new ArchiveLogForm(['log' => $log]);
+        $model = new ArchiveLogForm(['log' => $log, 'module' => $this->module]);
 
         if ($model->archive()) {
             Yii::$app->session->setFlash('success', $this->module->messages['archiveSuccess']);
@@ -128,13 +135,13 @@ class DefaultController extends Controller
     public function actionDelete($slug)
     {
         $log = $this->find($slug, null);
-        $model = new DeleteLogForm(['log' => $log]);
+        $model = new DeleteLogForm(['log' => $log, 'module' => $this->module]);
 
         if ($model->delete()) {
             Yii::$app->session->setFlash('success', $this->module->messages['deleteSuccess']);
         }
 
-        return $this->refresh();
+        return $this->redirect(['index']);
     }
 
     /**

@@ -19,7 +19,7 @@
         }
     ],
     "require": {
-        "php": "7.2.*",
+        "php": ">=5.4.0",
         "ext-zip": "*",
         "yiisoft/yii2": "*",
         "yiisoft/yii2-bootstrap": "~2.0.0",
