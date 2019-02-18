@@ -1,6 +1,7 @@
 <?php
 
 /* @var \yii\web\View $this */
+
 /* @var array $log */
 
 /* @var \lancoid\yii2LogViewer\Module $module */
@@ -16,6 +17,13 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="log-viewer-view">
     <div class="col-md-12 table-container">
         <table id="table-log" class="table table-striped">
+            <thead>
+            <tr>
+                <th><span class="float-left"><?= $messages['viewLogType'] ?></span></th>
+                <th><span class="float-left"><?= $messages['viewLogDetails'] ?></span></th>
+            </tr>
+            </thead>
+
             <tbody>
             <?php foreach ($log as $key => $value) { ?>
                 <tr>
@@ -27,12 +35,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     </td>
                     <td>
                         <span class="float-left"><?= $value['date'] ?></span>
-                        <button type="button"
-                                class="float-right expand btn btn-outline-dark btn-sm mb-2 ml-2"
-                                data-display="stack-<?= $key ?>"
-                        >
-                            <span class="glyphicon glyphicon-search"></span>
-                        </button>
+                        <?php if (key_exists('details', $value)) { ?>
+                            <button type="button"
+                                    class="float-right expand btn btn-outline-dark btn-sm mb-2 ml-2"
+                                    data-display="stack-<?= $key ?>"
+                            >
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        <?php } ?>
                         <br>
                         <?= $value['error'] ?>
                         <?php if (key_exists('details', $value)) { ?>
@@ -57,21 +67,22 @@ $this->params['breadcrumbs'][] = $this->title;
     });
     $('#table-log').DataTable({
       'language': {
-        'processing': 'Подождите...',
-        'lengthMenu': 'Показать _MENU_ записей',
-        'info': 'Записи с _START_ до _END_ из _TOTAL_ записей',
-        'infoEmpty': 'Записи с 0 до 0 из 0 записей',
-        'loadingRecords': 'Загрузка записей...',
-        'zeroRecords': 'Записи отсутствуют.',
-        'emptyTable': 'В таблице отсутствуют данные',
+        'processing': '<?= $messages['datatablesProcessing'] ?>',
+        'search': '<?= $messages['datatablesSearch'] ?>',
+        'lengthMenu': '<?= $messages['datatablesLengthMenu'] ?>',
+        'info': '<?= $messages['datatablesInfo'] ?>',
+        'infoEmpty': '<?= $messages['datatablesInfoEmpty'] ?>',
+        'infoFiltered': '<?= $messages['datatablesInfoFiltered'] ?>',
+        'loadingRecords': '<?= $messages['datatablesLoadingRecords'] ?>',
+        'zeroRecords': '<?= $messages['datatablesZeroRecords'] ?>',
+        'emptyTable': '<?= $messages['datatablesEmptyTable'] ?>',
         'paginate': {
-          'first': 'Первая',
-          'previous': 'Предыдущая',
-          'next': 'Следующая',
-          'last': 'Последняя',
+          'first': '<?= $messages['datatablesFirstPage'] ?>',
+          'previous': '<?= $messages['datatablesPreviousPage'] ?>',
+          'next': '<?= $messages['datatablesNextPage'] ?>',
+          'last': '<?= $messages['datatablesLastPage'] ?>',
         },
       },
-      'searching': false,
       'ordering': false,
       'stateSave': true,
       'stateSaveCallback': function(settings, data) {
